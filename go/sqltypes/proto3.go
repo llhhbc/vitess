@@ -31,8 +31,6 @@ import (
 // RowToProto3 converts []Value to proto3.
 func RowToProto3(row []Value) *querypb.Row {
 	result := &querypb.Row{}
-	result.Lengths = make([]int64, 0, len(row))
-	total := 0
 	for _, c := range row {
 		if c.IsNull() {
 			result.Lengths = append(result.Lengths, -1)
@@ -40,13 +38,6 @@ func RowToProto3(row []Value) *querypb.Row {
 		}
 		length := c.Len()
 		result.Lengths = append(result.Lengths, int64(length))
-		total += length
-	}
-	result.Values = make([]byte, 0, total)
-	for _, c := range row {
-		if c.IsNull() {
-			continue
-		}
 		result.Values = append(result.Values, c.Raw()...)
 	}
 	return result
